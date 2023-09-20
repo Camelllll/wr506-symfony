@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\SlugifyService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,5 +26,13 @@ class ProductController extends AbstractController
         return $this->render('product/view.html.twig', [
             'title' => 'Produit Numéro : ' . $productId,
         ]);
+    }
+
+    #[Route('/slugify/{phrase}', name: 'slugify_phrase')]
+    public function slugifyPhrase(SlugifyService $slugifyService, string $phrase): Response
+    {
+        $slug = $slugifyService->slugify($phrase);
+
+        return new Response('Slug : ' . $slug);
     }
 }
