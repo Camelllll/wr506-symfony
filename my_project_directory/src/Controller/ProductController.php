@@ -18,6 +18,14 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/slugify/{phrase}', name: 'slugify_phrase')]
+    public function slugifyPhrase(SlugifyService $slugifyService, string $phrase): Response
+    {
+        $slug = $slugifyService->slugify($phrase);
+
+        return new Response('Slug : ' . $slug);
+    }
+
     #[Route('/product/{id}', name: 'product_view')]
     public function viewProduct(Request $request): Response
     {
@@ -26,13 +34,5 @@ class ProductController extends AbstractController
         return $this->render('product/view.html.twig', [
             'title' => 'Produit Numéro : ' . $productId,
         ]);
-    }
-
-    #[Route('/slugify/{phrase}', name: 'slugify_phrase')]
-    public function slugifyPhrase(SlugifyService $slugifyService, string $phrase): Response
-    {
-        $slug = $slugifyService->slugify($phrase);
-
-        return new Response('Slug : ' . $slug);
     }
 }
