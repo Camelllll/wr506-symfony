@@ -37,6 +37,9 @@ class Actor
     #[Groups(['actor:read'])]
     private Collection $movies;
 
+    #[ORM\ManyToOne(targetEntity: Nationality::class)]
+    private ?Nationality $nationality = null;
+
     public function __construct()
     {
         $this->movies = new ArrayCollection();
@@ -68,6 +71,17 @@ class Actor
     {
         $this->lastName = $lastName;
 
+        return $this;
+    }
+
+    public function getNationality(): ?Nationality
+    {
+        return $this->nationality;
+    }
+
+    public function setNationality(?Nationality $nationality): self
+    {
+        $this->nationality = $nationality;
         return $this;
     }
 
