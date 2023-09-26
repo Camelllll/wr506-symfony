@@ -1,2 +1,9 @@
 # wr506-symfony
-C'est ici que l'on s'entraîne sur Symfony malheuresement
+{
+  "firstName": "Jean",
+  "lastName": "Ducroq",
+  "movies": [
+    "/api/movies/3"
+  ],
+  "nationality": "/api/nationalities/10"
+}
