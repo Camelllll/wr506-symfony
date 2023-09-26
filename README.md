@@ -1,2 +1,2 @@
 # wr506-symfony
-uwu
+C'est ici que l'on s'entraîne sur Symfony malheuresement
