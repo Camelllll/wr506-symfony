@@ -2,72 +2,55 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\MovieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
-    normalizationContext: [
-        'groups' => ['movie:read']
-    ],
+    normalizationContext: ['groups' => ['movie:read']],
 )]
 class Movie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['movie:read', 'actor:read'])]
+    #[Groups(['movie:read', 'actor:read', 'category:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
     #[Groups(['movie:read'])]
     private ?Category $category = null;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 50, maxMessage: 'Le titre doit faire entre 2 et 50 caractères')]
+    #[Groups(['movie:read', 'actor:read', 'category:read'])]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['movie:read'])]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    #[Assert\Length(min: 1, max: 1000, maxMessage: 'La durée doit faire entre 1 et 1000 minutes')]
+    #[Groups(['movie:read'])]
+    private ?int $duration = null;
+
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
     #[Groups(['movie:read'])]
     private Collection $actors;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['movie:read', 'actor:read'])]
-    private ?string $title = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups(['movie:read', 'actor:read'])]
-    private ?string $description = null;
-
-    #[ORM\Column]
-    #[Groups(['movie:read'])]
-    private ?int $duration = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['movie:read'])]
     private ?\DateTimeInterface $releaseDate = null;
-
-    public function __construct()
-    {
-        $this->actors = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Actor>
@@ -89,6 +72,28 @@ class Movie
     public function removeActor(Actor $actor): static
     {
         $this->actors->removeElement($actor);
+
+        return $this;
+    }
+
+    public function __construct()
+    {
+        $this->actors = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
@@ -116,6 +121,7 @@ class Movie
 
         return $this;
     }
+
 
     public function getDuration(): ?int
     {
