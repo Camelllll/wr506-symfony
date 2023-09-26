@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
@@ -20,21 +21,27 @@ class Movie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['movie:read', 'actor:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
+    #[Groups(['movie:read'])]
     private ?Category $category = null;
 
     #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'movies')]
+    #[Groups(['movie:read'])]
     private Collection $actors;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['movie:read', 'actor:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['movie:read', 'actor:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['movie:read'])]
     private ?int $duration = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
