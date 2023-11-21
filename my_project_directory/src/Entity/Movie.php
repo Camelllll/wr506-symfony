@@ -10,7 +10,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
 
+/**
+ * @ApiFilter(SearchFilter::class, properties={"title": "partial", "category": "exact", "duration": "exact", "releaseDate": "exact"})
+ */
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['movie:read']],
