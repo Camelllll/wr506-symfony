@@ -8,6 +8,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
@@ -23,7 +24,13 @@ class Category
 
     #[ORM\Column(length: 255)]
     #[Groups(['category:read', 'movie:read'])]
-    private ?string $name = null;
+    #[Assert\NotBlank(message: 'Le nom de la catégorie ne doit pas être vide')]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        maxMessage: 'Le nom de la catégorie doit faire entre {{ limit }} caractères maximum'
+    )]
+    private string $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Movie::class)]
     #[Groups(['category:read'])]

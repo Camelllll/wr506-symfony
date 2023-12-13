@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[ApiResource(
@@ -33,9 +34,15 @@ class Actor
     #[Groups(['actor:read'])]
     private Collection $movies;
 
-    #[ORM\ManyToOne(inversedBy: 'Actor')]
+    #[ORM\ManyToOne(targetEntity: Nationality::class)]
+    #[Assert\NotNull(message: 'La nationalité ne doit pas être vide')]
     #[Groups(['actor:read'])]
     private ?Nationality $nationality = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: 'integer', message: 'Le nombre d\'entrées doit être un nombre entier')]
+    #[Groups(['actor:read'])]
+    private ?string $reward = null;
 
     /**
      * @return Collection<int, Movie>
@@ -106,6 +113,18 @@ class Actor
     public function setNationality(?Nationality $nationality): static
     {
         $this->nationality = $nationality;
+
+        return $this;
+    }
+
+    public function getReward(): ?string
+    {
+        return $this->reward;
+    }
+
+    public function setReward(?string $reward): static
+    {
+        $this->reward = $reward;
 
         return $this;
     }
