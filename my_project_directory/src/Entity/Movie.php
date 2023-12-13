@@ -10,11 +10,16 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
+    paginationItemsPerPage: 2,
+    denormalizationContext: ['groups' => ['movie:write']],
     normalizationContext: ['groups' => ['movie:read']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 class Movie
 {
     #[ORM\Id]
@@ -34,12 +39,19 @@ class Movie
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(
+        message: 'La description ne doit pas être vide'
+    )]
     #[Groups(['movie:read'])]
     private ?string $description = null;
 
-    #[ORM\Column]
-    #[Assert\Length(min: 1, max: 1000, maxMessage: 'La durée doit faire entre 1 et 1000 minutes')]
+    #[ORM\Column(nullable: true)]
+    #[Assert\Range(
+        min: 1,
+        max: 1000,
+        notInRangeMessage: 'La durée doit être comprise entre {{ min }} et {{ max }} minutes',
+        invalidMessage: 'La durée doit être un nombre entier'
+    )]
     #[Groups(['movie:read'])]
     private ?int $duration = null;
 
@@ -48,9 +60,43 @@ class Movie
     private Collection $actors;
 
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\DateTime(message: 'La date de sortie doit être une valeur de date valide')]
     #[Groups(['movie:read'])]
     private ?\DateTimeInterface $releaseDate = null;
+
+    #[ORM\Column(type: 'float' , nullable: true)]
+    #[Assert\Range(
+        min: 0,
+        max: 10,
+        notInRangeMessage: 'La note doit être comprise entre {{ min }} et {{ max }}',
+        invalidMessage: 'La note doit être un nombre entier'
+    )]
+    #[Groups(['movie:read'])]
+    private ?float $note = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\Type(type: 'integer', message: 'Le nombre d\'entrées doit être un nombre entier')]
+    #[Groups(['movie:read'])]
+    private ?int $entries = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\Type(type: 'integer', message: 'Le budget doit être un nombre entier')]
+    #[Groups(['movie:read'])]
+    private ?int $budget = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(
+        message: 'Le réalisateur ne doit pas être vide'
+    )]
+    #[Assert\Length(min: 2, max: 50, maxMessage: 'Le réalisateur doit faire entre 2 et 50 caractères')]
+    #[Groups(['movie:read'])]
+    private ?string $director = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: 'Le site web doit être une URL valide')]
+    #[Groups(['movie:read'])]
+    private ?string $website = null;
 
     /**
      * @return Collection<int, Actor>
@@ -144,6 +190,62 @@ class Movie
     {
         $this->releaseDate = $releaseDate;
 
+        return $this;
+    }
+
+    public function getNote(): ?int
+    {
+        return $this->note;
+    }
+
+    public function setNote(int $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    public function getEntries(): ?int
+    {
+        return $this->entries;
+    }
+
+    public function setEntries(int $entries): static
+    {
+        $this->entries = $entries;
+
+        return $this;
+    }
+
+    public function getBudget(): ?int
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(int $budget): static
+    {
+        $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function getDirector(): ?string
+    {
+        return $this;
+    }
+
+    public function setDirector(string $string): static
+    {
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this;
+    }
+
+    public function setWebsite(string $string): static
+    {
         return $this;
     }
 }
