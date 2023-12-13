@@ -18,8 +18,8 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
         script: |
           cd public_html/democd/ 
-          git clone git@github.com:******/demo-symfony.git
-          cd demo-symfony
+          git clone git@github.com:Camelllll/wr506-symfony.git
+          cd my_project_directory
           git pull
           composer install
           php bin/console c:c
