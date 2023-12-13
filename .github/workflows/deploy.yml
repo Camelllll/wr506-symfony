@@ -17,7 +17,9 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
         script: |
-          cd /var/www/html/my_project_directory  # Remplacez ceci par le chemin de votre application Symfony sur le serveur
+          cd public_html/democd/ 
+          git clone git@github.com:******/demo-symfony.git
+          cd demo-symfony
           git pull
           composer install
-          php bin/console cache:clear
+          php bin/console c:c
