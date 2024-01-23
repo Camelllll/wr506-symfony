@@ -12,6 +12,8 @@ use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
@@ -101,6 +103,27 @@ class Movie
     /**
      * @return Collection<int, Actor>
      */
+
+     public function canBeViewedByUser(Security $security): bool
+     {
+         // Vérifie si l'utilisateur a le rôle ROLE_USER
+         if (!$security->isGranted('ROLE_USER')) {
+             return false;
+         }
+ 
+         return true;
+     }
+ 
+     public function canBeManagedByAdmin(Security $security): bool
+     {
+         // Vérifie si l'utilisateur a le rôle ROLE_ADMIN
+         if (!$security->isGranted('ROLE_ADMIN')) {
+             return false;
+         }
+ 
+         return true;
+     }
+     
     public function getActors(): Collection
     {
         return $this->actors;
