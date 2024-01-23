@@ -1,2 +1,9 @@
 # wr506-symfony
-uwu
+{
+  "firstName": "Jean",
+  "lastName": "Ducroq",
+  "movies": [
+    "/api/movies/3"
+  ],
+  "nationality": "/api/nationalities/10"
+}
