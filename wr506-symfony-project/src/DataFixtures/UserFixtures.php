@@ -19,9 +19,9 @@ class UserFixtures extends Fixture
 
         $user = new User();
         $user->setEmail('user@gmail.com');
+        $user->setUsername('user@gmail.com');
         $user->setPassword($this->passwordHasherInterface->hashPassword($user, 'test'));
         $manager->persist($user);
-
 
         $manager->flush();
     }

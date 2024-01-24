@@ -23,7 +23,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Le nom d\'utilisateur doit faire entre 2 et 50 caractères')]
     private ?string $username = null;
 
