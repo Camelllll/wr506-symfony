@@ -13,12 +13,11 @@ class CategoryFixtures extends Fixture
     {
         $faker = FakerFactory::create();
 
-        // Génère moi 5 objets Category fictifs
         foreach (range(1, 5) as $i) {
             $category = new Category();
-            $category->setName($faker->word); // Utilise Faker pour générer un nom de catégorie fictif
+            $category->setName($faker->word);
             $manager->persist($category);
-            $this->addReference('category_' . $i, $category); // "expose" l'objet à l'extérieur de la classe pour les liaisons avec Movie
+            $this->addReference('category_' . $i, $category);
         }
 
         $manager->flush();

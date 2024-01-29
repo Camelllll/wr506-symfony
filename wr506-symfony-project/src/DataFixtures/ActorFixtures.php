@@ -19,7 +19,7 @@ class ActorFixtures extends Fixture implements DependentFixtureInterface
             $actor->setFirstName($faker->firstName);
             $actor->setLastName($faker->lastName);
             $manager->persist($actor);
-            $this->addReference('actor_' . $i, $actor); // "expose" l'objet à l'extérieur de la classe pour les liaisons avec Movie
+            $this->addReference('actor_' . $i, $actor); 
         }
 
         $manager->flush();
