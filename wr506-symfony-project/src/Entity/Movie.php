@@ -250,24 +250,4 @@ class Movie
 
         return $this;
     }
-
-    public function getDirector(): ?string
-    {
-        return $this->director;
-    }
-
-    public function setDirector(string $string): static
-    {
-        return $this;
-    }
-
-    public function getWebsite(): ?string
-    {
-        return $this->website;
-    }
-
-    public function setWebsite(string $string): static
-    {
-        return $this;
-    }
 }
