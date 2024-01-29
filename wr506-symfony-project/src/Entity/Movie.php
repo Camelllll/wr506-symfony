@@ -10,10 +10,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
@@ -249,26 +248,6 @@ class Movie
     {
         $this->budget = $budget;
 
-        return $this;
-    }
-
-    public function getDirector(): ?string
-    {
-        return $this;
-    }
-
-    public function setDirector(string $string): static
-    {
-        return $this;
-    }
-
-    public function getWebsite(): ?string
-    {
-        return $this;
-    }
-
-    public function setWebsite(string $string): static
-    {
         return $this;
     }
 }
