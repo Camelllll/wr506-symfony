@@ -47,6 +47,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:create', 'user:update'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
+  
+    #[ORM\Column]
+    private array $roles = [];
+
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\Length(min: 2, max: 50, maxMessage: 'Le nom d\'utilisateur doit faire entre 2 et 50 caractères')]
+    private ?string $username = null;
+
+    /**
+     * @var string The hashed password
+     */
     #[ORM\Column]
     private ?string $password = null;
     #[Assert\NotBlank(groups: ['user:create'])]
