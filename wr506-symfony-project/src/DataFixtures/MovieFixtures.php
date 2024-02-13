@@ -6,37 +6,37 @@ use App\Entity\Movie;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class MovieFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        foreach (range(1, 40) as $i) {
-            $movie = new Movie();
-        
-            // Utilisez des valeurs statiques pour les données
-            $movie->setTitle('Titre ' . $i);
-            $movie->setReleaseDate(new \DateTime('now'));
-            $movie->setDuration(rand(60, 240));
-            $movie->setDescription('Description ' . $i);
-            $movie->setNote(rand(1, 5));
-            $movie->setEntries(rand(1000, 1000000));
-            $movie->setBudget(rand(1000000, 100000000));
-            $movie->setWebsite('https://www.google.com');
+        $faker = Factory::create('fr_FR');
+        $faker->addProvider(new \Xylis\FakerCinema\Provider\Movie($faker));
 
-            
-        
-            $movie->setCategory($this->getReference('category_' . rand(1, 5)));
-        
-            $actors = [];
-            foreach (range(1, rand(2, 6)) as $j) {
-                $actor = $this->getReference('actor_' . rand(1, 10));
-                if (!in_array($actor, $actors)) {
-                    $actors[] = $actor;
-                    $movie->addActor($actor);
+        foreach (range(1, 40) as $i) {
+            $movie = (new Movie())
+                ->setTitle($faker->unique()->movie)
+                ->setPoster($faker->imageUrl(400, 600, 'movies', true))
+                ->setDescription($faker->text(200))
+                ->setDuration(rand(100, 250))
+                ->setNote(
+                    rand(0, 5) + rand(0, 5) / 10
+                )
+                ->setCategory($this->getReference('category_' . rand(1, 8)))
+                ->setReleaseDate($faker->dateTimeBetween(
+                    "-50 years",
+                ))
+                ->setDirector($faker->name)
+                ->setEntries(rand(5000, 10000000))
+                ->setBudget(rand(100000, 100000000))
+                ->setWebsite($faker->url);
+
+                foreach (range(1, rand(1, 5)) as $j) {
+                    $movie->addActor($this->getReference('actor_' . rand(1, 30)));
                 }
-            }
-        
+
             $manager->persist($movie);
         }
 
@@ -46,7 +46,7 @@ class MovieFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            CategoryFixtures::class,
+            UserFixtures::class,
             ActorFixtures::class,
         ];
     }

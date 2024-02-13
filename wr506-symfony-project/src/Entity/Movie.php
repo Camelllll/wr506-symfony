@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Security;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
-    paginationItemsPerPage: 2,
+    paginationItemsPerPage: 12,
     denormalizationContext: ['groups' => ['movie:write']],
     normalizationContext: ['groups' => ['movie:read']],
 )]
@@ -98,6 +98,11 @@ class Movie
     #[Assert\Url(message: 'Le site web doit être une URL valide')]
     #[Groups(['movie:read'])]
     private ?string $website = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['movie:read', 'movie:write'])]
+    private ?string $poster = null;
+
 
     /**
      * @return Collection<int, Actor>
@@ -271,6 +276,18 @@ class Movie
     public function setWebsite(string $website): static
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function setPoster(string $poster): static
+    {
+        $this->poster = $poster;
 
         return $this;
     }
