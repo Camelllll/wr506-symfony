@@ -13,7 +13,8 @@ use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[ApiResource(
-    paginationItemsPerPage: 4,
+    paginationItemsPerPage: 36,
+    denormalizationContext: ['groups' => ['movie:write']],
     normalizationContext: ['groups' => ['actor:read']],
 )]
 class Actor
