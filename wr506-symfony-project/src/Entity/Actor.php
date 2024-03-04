@@ -9,9 +9,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[ApiResource(
+    paginationItemsPerPage: 36,
+    denormalizationContext: ['groups' => ['movie:write']],
     normalizationContext: ['groups' => ['actor:read']],
 )]
 class Actor
@@ -38,11 +41,19 @@ class Actor
     #[Assert\NotNull(message: 'La nationalité ne doit pas être vide')]
     #[Groups(['actor:read'])]
     private ?Nationality $nationality = null;
-
+    
     #[ORM\Column(nullable: true)]
-    #[Assert\Type(type: 'integer', message: 'Le nombre d\'entrées doit être un nombre entier')]
     #[Groups(['actor:read'])]
     private ?string $reward = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['actor:read'])]
+    private ?\DateTimeInterface $birthday = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['actor:read', 'movie:read', 'nationality:read'])]
+    private ?string $image = null;
+
 
     /**
      * @return Collection<int, Movie>
@@ -125,6 +136,29 @@ class Actor
     public function setReward(?string $reward): static
     {
         $this->reward = $reward;
+
+        return $this;
+    }
+
+    public function getBirthday(): ?\DateTimeInterface
+    {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?\DateTimeInterface $birthday): static
+    {
+        $this->birthday = $birthday;
+
+        return $this;
+    }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
