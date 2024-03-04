@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Security;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ApiResource(
-    paginationItemsPerPage: 2,
+    paginationItemsPerPage: 12,
     denormalizationContext: ['groups' => ['movie:write']],
     normalizationContext: ['groups' => ['movie:read']],
 )]
@@ -30,20 +30,20 @@ class Movie
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
-    #[Groups(['movie:read'])]
+    #[Groups(['movie:read', 'movie:write'])]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Le titre doit faire entre 2 et 50 caractères')]
-    #[Groups(['movie:read', 'actor:read', 'category:read'])]
+    #[Groups(['movie:read', 'actor:read', 'category:read', 'movie:write'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
         message: 'La description ne doit pas être vide'
     )]
-    #[Groups(['movie:read'])]
+    #[Groups(['movie:read', 'movie:write'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
@@ -62,7 +62,6 @@ class Movie
 
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\DateTime(message: 'La date de sortie doit être une valeur de date valide')]
     #[Groups(['movie:read'])]
     private ?\DateTimeInterface $releaseDate = null;
 
@@ -98,6 +97,11 @@ class Movie
     #[Assert\Url(message: 'Le site web doit être une URL valide')]
     #[Groups(['movie:read'])]
     private ?string $website = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['movie:read', 'movie:write'])]
+    private ?string $poster = null;
+
 
     /**
      * @return Collection<int, Actor>
@@ -247,6 +251,42 @@ class Movie
     public function setBudget(int $budget): static
     {
         $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function getDirector(): ?string
+    {
+        return $this->director;
+    }
+
+    public function setDirector(string $director): static
+    {
+        $this->director = $director;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function setPoster(string $poster): static
+    {
+        $this->poster = $poster;
 
         return $this;
     }
