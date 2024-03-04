@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -8,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Controller\MediaObjectController;
+use App\Repository\MediaObjectRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -15,12 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Vich\Uploadable]
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: MediaObjectRepository::class)]
 #[ApiResource(
     types: ['https://schema.org/MediaObject'],
     operations: [
-        new Get(),
-        new GetCollection(),
+        new Get(security: "is_granted('ROLE_USER')"),
+        new GetCollection(security: "is_granted('ROLE_USER')"),
         new Post(
             controller: MediaObjectController::class,
             openapi: new Model\Operation(
@@ -40,6 +42,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                     ])
                 )
             ),
+            security: "is_granted('ROLE_ADMIN')",
             validationContext: ['groups' => ['Default', 'media_object:create']],
             deserialize: false
         )
@@ -49,10 +52,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class MediaObject
 {
     #[ORM\Id, ORM\Column, ORM\GeneratedValue]
+    #[Groups(['media_object:read'])]
     private ?int $id = null;
 
     #[ApiProperty(types: ['https://schema.org/contentUrl'])]
-    #[Groups(['media_object:read', 'movie:read'])]
+    #[Groups(['media_object:read', 'movie:read', 'actor:read', 'user:read'])]
     public ?string $contentUrl = null;
 
     #[Vich\UploadableField(mapping: "media_object", fileNameProperty: "filePath")]
@@ -67,8 +71,17 @@ class MediaObject
     #[ORM\Column(nullable: true)]
     public ?string $filePath = null;
 
-    #[ORM\ManyToOne(targetEntity: Movie::class, cascade: ['persist'], inversedBy: 'mediaObjects')]
+    #[ORM\ManyToOne(targetEntity: Movie::class, inversedBy: 'mediaObjects')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Movie $movie = null;
+
+    #[ORM\ManyToOne(targetEntity: Actor::class, inversedBy: 'mediaObjects')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?Actor $actor = null;
+
+    #[ORM\OneToOne(mappedBy: 'mediaObject', targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -83,6 +96,18 @@ class MediaObject
     public function setMovie(?Movie $movie): self
     {
         $this->movie = $movie;
+
+        return $this;
+    }
+
+    public function getActor(): ?Actor
+    {
+        return $this->actor;
+    }
+
+    public function setActor(?Actor $actor): self
+    {
+        $this->actor = $actor;
 
         return $this;
     }
@@ -106,6 +131,18 @@ class MediaObject
     public function setFilePath(?string $filePath): MediaObject
     {
         $this->filePath = $filePath;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
         return $this;
     }
 }

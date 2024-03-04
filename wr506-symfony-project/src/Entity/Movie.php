@@ -30,20 +30,20 @@ class Movie
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
-    #[Groups(['movie:read'])]
+    #[Groups(['movie:read', 'movie:write'])]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50, maxMessage: 'Le titre doit faire entre 2 et 50 caractères')]
-    #[Groups(['movie:read', 'actor:read', 'category:read'])]
+    #[Groups(['movie:read', 'actor:read', 'category:read', 'movie:write'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(
         message: 'La description ne doit pas être vide'
     )]
-    #[Groups(['movie:read'])]
+    #[Groups(['movie:read', 'movie:write'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
@@ -62,7 +62,6 @@ class Movie
 
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\DateTime(message: 'La date de sortie doit être une valeur de date valide')]
     #[Groups(['movie:read'])]
     private ?\DateTimeInterface $releaseDate = null;
 
