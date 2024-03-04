@@ -11,8 +11,10 @@
 
 ### Installation
 
-1. Cloner le projet
-
+1. Cloner le projet puis faites un cd 
+    ```bash
+    cd wr506-symfony-project
+    ```
 2. Installer les dépendances
     ```bash
     composer install
