@@ -10,12 +10,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 #[ApiResource(
-    paginationItemsPerPage: 36,
-    denormalizationContext: ['groups' => ['movie:write']],
-    normalizationContext: ['groups' => ['actor:read']],
+    operations: [
+        new GetCollection(security: "is_granted('ROLE_USER')"),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Get(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')"),
+        new Patch(security: "is_granted('ROLE_ADMIN')"),
+    ],
+    normalizationContext: [
+        'groups' => ['movie:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['movie:write'],
+    ],
 )]
 class Actor
 {
